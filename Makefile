@@ -3,7 +3,7 @@
 # ─────────────────────────────────────────────────────────────
 
 .DEFAULT_GOAL := help
-.PHONY: help setup dev build start lint audit clean env deploy logs
+.PHONY: help setup dev build start lint audit clean env deploy deploy-prod prod deploy-preview logs
 
 # Cores
 GREEN  := \033[0;32m
@@ -12,6 +12,8 @@ YELLOW := \033[0;33m
 RESET  := \033[0m
 
 ## ── Setup ────────────────────────────────────────────────────
+
+install: setup ## Alias para setup
 
 setup: ## Instala dependências e cria .env.local a partir do exemplo
 	@echo "$(CYAN)→ Instalando dependências...$(RESET)"
@@ -79,14 +81,19 @@ clean-cache: ## Remove apenas o cache .next
 
 ## ── Deploy (Vercel) ──────────────────────────────────────────
 
-deploy: check build ## Verifica qualidade e faz build antes do deploy
-	@echo "$(CYAN)→ Deploy para Vercel...$(RESET)"
-	vercel --prod
-	@echo "$(GREEN)✓ Deploy concluído!$(RESET)"
+deploy: deploy-preview ## Alias para deploy-preview
 
-deploy-preview: ## Deploy de preview (branch staging)
-	@echo "$(CYAN)→ Deploy preview...$(RESET)"
+prod: ## Deploy direto para PRODUÇÃO (Vercel --prod)
+	@echo "$(CYAN)→ Deploy PRODUÇÃO para Vercel...$(RESET)"
+	vercel --prod
+	@echo "$(GREEN)✓ Deploy produção concluído!$(RESET)"
+
+deploy-prod: check build prod ## Verifica qualidade, faz build e deploy produção
+
+deploy-preview: ## Deploy de preview (Staging)
+	@echo "$(CYAN)→ Deploy PREVIEW para Vercel...$(RESET)"
 	vercel
+	@echo "$(GREEN)✓ Deploy preview concluído!$(RESET)"
 
 ## ── Git ──────────────────────────────────────────────────────
 
