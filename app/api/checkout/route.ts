@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { Resend } from "resend";
+import { sendEmail } from "@/lib/mailtrap";
 
 const PLANS: Record<string, { name: string; value: number; label: string }> = {
     starter: { name: "NeoConvert Starter", value: 750, label: "R$ 7,50/mês" },
@@ -59,19 +59,14 @@ export async function POST(req: NextRequest) {
         const wooviData = await wooviRes.json();
         const charge = wooviData.charge;
 
-        // Enviar email de confirmação via Resend
-        if (process.env.RESEND_API_KEY) {
-            const resend = new Resend(process.env.RESEND_API_KEY);
-            const fromAddress =
-                process.env.RESEND_FROM || "NeoConvert <no-reply@neo-convert.com>";
-
+        // Enviar email de confirmação via Mailtrap
+        if (process.env.MAILTRAP_API_TOKEN) {
             const pixCode = charge?.brCode || charge?.pixQrCode?.payload || "";
             const qrImage = charge?.pixQrCode?.encodedImage
                 ? `<img src="data:image/png;base64,${charge.pixQrCode.encodedImage}" width="200" height="200" alt="QR Code Pix" style="border-radius:12px;" />`
                 : "";
 
-            await resend.emails.send({
-                from: fromAddress,
+            await sendEmail({
                 to: email,
                 subject: `⚡ Seu Pix para ${plan.name} — NeoConvert`,
                 html: `
@@ -81,32 +76,16 @@ export async function POST(req: NextRequest) {
 <body style="margin:0;padding:0;background:#050508;font-family:'Segoe UI',system-ui,sans-serif;color:#e8e8f0;">
   <div style="max-width:560px;margin:0 auto;padding:40px 24px;">
     <div style="text-align:center;margin-bottom:32px;">
-      <div style="display:inline-flex;align-items:center;gap:8px;background:rgba(0,255,157,0.1);border:1px solid rgba(0,255,157,0.3);border-radius:999px;padding:6px 16px;margin-bottom:24px;">
-        <span style="width:6px;height:6px;background:#00ff9d;border-radius:50%;"></span>
-        <span style="color:#00ff9d;font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;font-family:monospace;">NeoConvert</span>
-      </div>
       <h1 style="font-size:28px;font-weight:800;margin:0 0 8px;">Seu Pix está pronto! ⚡</h1>
       <p style="color:rgba(232,232,240,0.6);margin:0;">Olá, ${name}! Use o QR Code ou o código abaixo para ativar seu plano ${plan.name}.</p>
     </div>
-
     <div style="background:#13131a;border:1px solid rgba(0,255,157,0.2);border-radius:20px;padding:32px;text-align:center;margin-bottom:24px;">
       <div style="font-size:36px;font-weight:800;color:#00ff9d;margin-bottom:4px;">${plan.label}</div>
       <div style="color:rgba(232,232,240,0.5);font-size:13px;margin-bottom:24px;">Plano ${plan.name}</div>
-      
       ${qrImage ? `<div style="margin-bottom:24px;">${qrImage}</div>` : ""}
-
-      ${pixCode
-                        ? `
-      <div style="background:#0a0a0f;border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:16px;word-break:break-all;font-family:monospace;font-size:11px;color:rgba(232,232,240,0.7);text-align:left;margin-bottom:16px;">
-        ${pixCode}
-      </div>
-      `
-                        : ""
-                    }
-
-      <div style="font-size:12px;color:rgba(232,232,240,0.4);">ID da cobrança: ${correlationID}</div>
+      ${pixCode ? `<div style="background:#0a0a0f;border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:16px;word-break:break-all;font-family:monospace;font-size:11px;color:rgba(232,232,240,0.7);text-align:left;margin-bottom:16px;">${pixCode}</div>` : ""}
+      <div style="font-size:12px;color:rgba(232,232,240,0.4);">ID: ${correlationID}</div>
     </div>
-
     <div style="background:#13131a;border:1px solid rgba(255,255,255,0.06);border-radius:16px;padding:24px;margin-bottom:24px;">
       <h3 style="font-size:14px;font-weight:700;margin:0 0 12px;color:#00ff9d;">Como pagar</h3>
       <ol style="margin:0;padding:0 0 0 20px;color:rgba(232,232,240,0.6);font-size:14px;line-height:2;">
@@ -116,10 +95,9 @@ export async function POST(req: NextRequest) {
         <li>Sua conta será ativada automaticamente em minutos</li>
       </ol>
     </div>
-
     <div style="text-align:center;font-size:12px;color:rgba(232,232,240,0.3);">
-      <p>O Pix expira em 1 hora. Dúvidas? <a href="mailto:suporte@neo-convert.com" style="color:#00ff9d;text-decoration:none;">suporte@neo-convert.com</a></p>
-      <p style="margin-top:8px;">© ${new Date().getFullYear()} NeoConvert · Todos os direitos reservados</p>
+      <p>Dúvidas? <a href="mailto:suporte@neo-convert.com" style="color:#00ff9d;text-decoration:none;">suporte@neo-convert.com</a></p>
+      <p style="margin-top:8px;">© ${new Date().getFullYear()} NeoConvert</p>
     </div>
   </div>
 </body>

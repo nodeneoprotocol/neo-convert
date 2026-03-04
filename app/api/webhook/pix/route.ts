@@ -1,76 +1,71 @@
 import { NextRequest, NextResponse } from "next/server";
 import crypto from "crypto";
-import { Resend } from "resend";
+import { sendEmail } from "@/lib/mailtrap";
 
 function validateWooviSignature(body: string, signature: string): boolean {
-    const secret = process.env.WOOVI_WEBHOOK_SECRET;
-    if (!secret) {
-        console.warn("WOOVI_WEBHOOK_SECRET não configurado — validação ignorada");
-        return true;
-    }
-    const expected = crypto
-        .createHmac("sha256", secret)
-        .update(body)
-        .digest("hex");
-    return crypto.timingSafeEqual(
-        Buffer.from(expected, "hex"),
-        Buffer.from(signature, "hex")
-    );
+  const secret = process.env.WOOVI_WEBHOOK_SECRET;
+  if (!secret) {
+    console.warn("WOOVI_WEBHOOK_SECRET não configurado — validação ignorada");
+    return true;
+  }
+  const expected = crypto
+    .createHmac("sha256", secret)
+    .update(body)
+    .digest("hex");
+  return crypto.timingSafeEqual(
+    Buffer.from(expected, "hex"),
+    Buffer.from(signature, "hex")
+  );
 }
 
 export async function POST(req: NextRequest) {
-    const rawBody = await req.text();
-    const signature =
-        req.headers.get("x-webhook-signature") ||
-        req.headers.get("x-woovi-signature") ||
-        "";
+  const rawBody = await req.text();
+  const signature =
+    req.headers.get("x-webhook-signature") ||
+    req.headers.get("x-woovi-signature") ||
+    "";
 
-    if (signature && !validateWooviSignature(rawBody, signature)) {
-        console.error("Assinatura do webhook inválida");
-        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+  if (signature && !validateWooviSignature(rawBody, signature)) {
+    console.error("Assinatura do webhook inválida");
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
 
-    let payload: {
-        event?: string;
-        charge?: {
-            correlationID?: string;
-            status?: string;
-            customer?: { name?: string; email?: string };
-            comment?: string;
-        };
+  let payload: {
+    event?: string;
+    charge?: {
+      correlationID?: string;
+      status?: string;
+      customer?: { name?: string; email?: string };
+      comment?: string;
     };
+  };
 
-    try {
-        payload = JSON.parse(rawBody);
-    } catch {
-        return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
-    }
+  try {
+    payload = JSON.parse(rawBody);
+  } catch {
+    return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
+  }
 
-    const { event, charge } = payload;
+  const { event, charge } = payload;
 
-    // Woovi envia "OPENPIX:CHARGE_COMPLETED" quando Pix é pago
-    if (event === "OPENPIX:CHARGE_COMPLETED" || charge?.status === "COMPLETED") {
-        const correlationID = charge?.correlationID;
-        const customerEmail = charge?.customer?.email;
-        const customerName = charge?.customer?.name;
-        const planName = charge?.comment;
+  // Woovi envia "OPENPIX:CHARGE_COMPLETED" quando Pix é pago
+  if (event === "OPENPIX:CHARGE_COMPLETED" || charge?.status === "COMPLETED") {
+    const correlationID = charge?.correlationID;
+    const customerEmail = charge?.customer?.email;
+    const customerName = charge?.customer?.name;
+    const planName = charge?.comment;
 
-        console.log(`✅ Pix pago: ${correlationID} — ${customerEmail}`);
+    console.log(`✅ Pix pago: ${correlationID} — ${customerEmail}`);
 
-        // TODO: Ativar assinatura no banco de dados
-        // await db.subscription.activate({ correlationID, email: customerEmail });
+    // TODO: Ativar assinatura no banco de dados
+    // await db.subscription.activate({ correlationID, email: customerEmail });
 
-        // Enviar email de boas-vindas
-        if (customerEmail && process.env.RESEND_API_KEY) {
-            const resend = new Resend(process.env.RESEND_API_KEY);
-            const fromAddress =
-                process.env.RESEND_FROM || "NeoConvert <no-reply@neo-convert.com>";
-
-            await resend.emails.send({
-                from: fromAddress,
-                to: customerEmail,
-                subject: `🎉 Pagamento confirmado! Bem-vindo ao NeoConvert ${planName}`,
-                html: `
+    // Enviar email de boas-vindas via Mailtrap
+    if (customerEmail && process.env.MAILTRAP_API_TOKEN) {
+      await sendEmail({
+        to: customerEmail,
+        subject: `🎉 Pagamento confirmado! Bem-vindo ao NeoConvert ${planName}`,
+        html: `
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"></head>
@@ -89,7 +84,7 @@ export async function POST(req: NextRequest) {
         <span style="color:#00ff9d;font-weight:700;">✓ Assinatura ativa — ${planName || "Pro"}</span>
       </div>
       <p style="color:rgba(232,232,240,0.6);font-size:14px;margin:0;">
-        Acesse todas as ferramentas premium agora mesmo em <a href="${process.env.NEXT_PUBLIC_APP_URL || "https://neo-convert.com"}" style="color:#00ff9d;text-decoration:none;">neo-convert.com</a>
+        Acesse todas as ferramentas premium em <a href="${process.env.NEXT_PUBLIC_APP_URL || "https://neo-convert.com"}" style="color:#00ff9d;text-decoration:none;">neo-convert.com</a>
       </p>
     </div>
 
@@ -101,12 +96,12 @@ export async function POST(req: NextRequest) {
   </div>
 </body>
 </html>`,
-            });
-        }
-
-        return NextResponse.json({ received: true, processed: "payment_confirmed" });
+      });
     }
 
-    // Outros eventos — apenas confirmar recebimento
-    return NextResponse.json({ received: true, event: event || "unknown" });
+    return NextResponse.json({ received: true, processed: "payment_confirmed" });
+  }
+
+  // Outros eventos — apenas confirmar recebimento
+  return NextResponse.json({ received: true, event: event || "unknown" });
 }
