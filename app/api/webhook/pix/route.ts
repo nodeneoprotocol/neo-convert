@@ -84,13 +84,13 @@ export async function POST(req: NextRequest) {
         <span style="color:#00ff9d;font-weight:700;">✓ Assinatura ativa — ${planName || "Pro"}</span>
       </div>
       <p style="color:rgba(232,232,240,0.6);font-size:14px;margin:0;">
-        Acesse todas as ferramentas premium em <a href="${process.env.NEXT_PUBLIC_APP_URL || "https://neo-convert.com"}" style="color:#00ff9d;text-decoration:none;">neo-convert.com</a>
+        Acesse todas as ferramentas premium em <a href="${process.env.NEXT_PUBLIC_APP_URL || "https://neo-convert.site"}" style="color:#00ff9d;text-decoration:none;">neo-convert.site</a>
       </p>
     </div>
 
     <div style="text-align:center;font-size:12px;color:rgba(232,232,240,0.3);">
       <p>ID da cobrança: ${correlationID}</p>
-      <p style="margin-top:8px;">Dúvidas? <a href="mailto:suporte@neo-convert.com" style="color:#00ff9d;text-decoration:none;">suporte@neo-convert.com</a></p>
+      <p style="margin-top:8px;">Dúvidas? <a href="mailto:suporte@neo-convert.site" style="color:#00ff9d;text-decoration:none;">suporte@neo-convert.site</a></p>
       <p style="margin-top:8px;">© ${new Date().getFullYear()} NeoConvert</p>
     </div>
   </div>

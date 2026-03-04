@@ -71,7 +71,7 @@ Enviado automaticamente após criação da cobrança com:
 
 ### From address
 ```
-NeoConvert <no-reply@neo-convert.com>
+NeoConvert <no-reply@neo-convert.site>
 ```
 > Configurar domínio no painel Resend: https://resend.com/domains
 

@@ -33,8 +33,9 @@ export async function POST(req: NextRequest) {
             {
                 method: "POST",
                 headers: {
-                    // Woovi usa o App ID diretamente como Authorization
-                    Authorization: process.env.APP_ID || process.env.WOOVI_API_KEY || "",
+                    // Woovi espera o token base64 (Client_Id:Client_Secret encoded)
+                    // Configurar WOOVI_API_KEY com o valor "Q2xpZW50X0lk..." do painel
+                    Authorization: process.env.WOOVI_API_KEY || process.env.APP_ID || "",
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify({
@@ -97,7 +98,7 @@ export async function POST(req: NextRequest) {
       </ol>
     </div>
     <div style="text-align:center;font-size:12px;color:rgba(232,232,240,0.3);">
-      <p>Dúvidas? <a href="mailto:suporte@neo-convert.com" style="color:#00ff9d;text-decoration:none;">suporte@neo-convert.com</a></p>
+      <p>Dúvidas? <a href="mailto:suporte@neo-convert.site" style="color:#00ff9d;text-decoration:none;">suporte@neo-convert.site</a></p>
       <p style="margin-top:8px;">© ${new Date().getFullYear()} NeoConvert</p>
     </div>
   </div>

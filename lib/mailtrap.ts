@@ -17,7 +17,7 @@ export async function sendEmail({ to, subject, html, fromName, fromEmail }: Mail
     }
 
     const from = {
-        email: fromEmail || process.env.MAILTRAP_FROM_EMAIL || "no-reply@neo-convert.com",
+        email: fromEmail || process.env.MAILTRAP_FROM_EMAIL || "no-reply@neo-convert.site",
         name: fromName || process.env.MAILTRAP_FROM_NAME || "NeoConvert",
     };
 

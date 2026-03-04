@@ -6,7 +6,7 @@
 |---------|-----|-------|
 | **Vercel** | Hosting + Edge Functions | Free (até 100GB/mês) |
 | **GitHub** | Repositório + CI/CD | Free |
-| **neo-convert.com** | Domínio | ~R$50/ano |
+| **neo-convert.site** | Domínio | ~R$50/ano |
 | **Woovi** | Pix (sem mensalidade) | % por transação |
 | **Resend** | Email (3k emails/mês) | Free tier |
 
@@ -60,7 +60,7 @@ Ou via dashboard: **vercel.com → neo-convert → Settings → Environment Vari
 
 No painel Vercel:
 1. **Settings → Domains → Add Domain**
-2. Adicionar `neo-convert.com`
+2. Adicionar `neo-convert.site`
 3. Copiar os DNS records
 4. Configurar no registrador do domínio
 
@@ -68,7 +68,7 @@ No painel Vercel:
 
 No painel Woovi → Webhooks → Criar:
 ```
-URL: https://neo-convert.com/api/webhook/pix
+URL: https://neo-convert.site/api/webhook/pix
 Events: CHARGE_COMPLETED
 ```
 

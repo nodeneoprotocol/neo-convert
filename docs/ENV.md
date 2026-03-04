@@ -14,7 +14,7 @@ WOOVI_WEBHOOK_SECRET=SUA_WEBHOOK_SECRET_AQUI
 # ─── RESEND (Email) ──────────────────────────────────────
 # Chave em: https://resend.com/api-keys
 RESEND_API_KEY=re_XXXXXXXX
-RESEND_FROM=NeoConvert <no-reply@neo-convert.com>
+RESEND_FROM=NeoConvert <no-reply@neo-convert.site>
 
 # ─── APP ─────────────────────────────────────────────────
 NEXT_PUBLIC_APP_URL=http://localhost:3000
@@ -29,8 +29,8 @@ WOOVI_API_KEY=PROD_APP_ID
 WOOVI_API_URL=https://api.woovi.com
 WOOVI_WEBHOOK_SECRET=PROD_WEBHOOK_SECRET
 RESEND_API_KEY=re_PROD_KEY
-RESEND_FROM=NeoConvert <no-reply@neo-convert.com>
-NEXT_PUBLIC_APP_URL=https://neo-convert.com
+RESEND_FROM=NeoConvert <no-reply@neo-convert.site>
+NEXT_PUBLIC_APP_URL=https://neo-convert.site
 ```
 
 ---
@@ -41,12 +41,12 @@ NEXT_PUBLIC_APP_URL=https://neo-convert.com
 1. Criar conta em [woovi.com](https://woovi.com)
 2. Ir em **Configurações → Aplicações**
 3. Criar nova aplicação → copiar `App Id`
-4. Para webhook: **Configurações → Webhooks → Criar** com a URL `https://neo-convert.com/api/webhook/pix`
+4. Para webhook: **Configurações → Webhooks → Criar** com a URL `https://neo-convert.site/api/webhook/pix`
 
 ### Resend (Email)
 1. Criar conta em [resend.com](https://resend.com)
 2. Ir em **API Keys → Create API Key**
-3. Adicionar domínio `neo-convert.com` em **Domains** (para produção)
+3. Adicionar domínio `neo-convert.site` em **Domains** (para produção)
 4. Para teste local, usar `onboarding@resend.dev` como `from`
 
 ---

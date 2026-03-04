@@ -11,7 +11,7 @@
 | Email | **Resend** | Auth: já integrado no flowpay-api |
 | PDF Engine | **pdf-lib** | Client-side, sem servidor |
 | Deploy | **Vercel** | Free tier, edge functions |
-| Domínio | neo-convert.com | A confirmar |
+| Domínio | neo-convert.site | A confirmar |
 
 ---
 
