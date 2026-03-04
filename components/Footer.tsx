@@ -31,7 +31,7 @@ export default function Footer() {
 
           {[
             { title: "Ferramentas", links: ["Comprimir PDF", "Mesclar PDF", "Dividir PDF", "Assinar PDF", "PDF para Word"] },
-            { title: "Empresa", links: ["Sobre nós", "Blog", "Preços", "Contato"] },
+            { title: "Empresa", links: ["Sobre nós", "Preços", "Contato"] },
             { title: "Legal", links: ["Privacidade", "Termos", "Cookies", "Segurança"] },
           ].map((col) => (
             <div key={col.title}>

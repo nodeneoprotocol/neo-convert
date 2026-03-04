@@ -266,7 +266,7 @@ export async function POST(req: NextRequest) {
         <li>Abra o app do seu banco</li>
         <li>Escaneie o QR Code ou copie o código Pix</li>
         <li>Confirme o pagamento</li>
-        <li>Sua conta será ativada automaticamente em minutos</li>
+        <li>Seu plano será liberado automaticamente em minutos</li>
       </ol>
     </div>
     <div style="text-align:center;font-size:12px;color:rgba(232,232,240,0.3);">

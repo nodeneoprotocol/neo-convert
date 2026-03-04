@@ -36,7 +36,6 @@ export default function Navbar() {
           {[
             { label: "Ferramentas", href: "#tools" },
             { label: "Preços", href: "#precos" },
-            { label: "Blog", href: "/blog" },
           ].map((item) => (
             <Link key={item.href} href={item.href} style={{
               padding: "8px 14px", borderRadius: "var(--radius-sm)",
@@ -53,13 +52,6 @@ export default function Navbar() {
 
         {/* CTA */}
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <Link href="/login" style={{
-            padding: "8px 16px", borderRadius: "var(--radius-sm)",
-            color: "var(--text-secondary)", fontSize: 14, fontWeight: 500,
-            textDecoration: "none", border: "none", background: "transparent",
-          }}>
-            Entrar
-          </Link>
           <Link href="#precos" className="btn-primary" style={{ padding: "9px 20px", fontSize: 14 }}>
             Começar grátis
           </Link>
