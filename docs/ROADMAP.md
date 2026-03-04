@@ -17,7 +17,7 @@
 - [x] Grid de 12 ferramentas (UI)
 - [x] Pricing 3 planos (R$7,50 / R$29 / R$79)
 - [x] CheckoutModal com Pix
-- [x] API `/api/checkout` → Woovi
+- [x] API `/api/checkout` → FlowPay API
 - [x] Email de confirmação via Resend
 - [x] Documentação (`docs/`)
 

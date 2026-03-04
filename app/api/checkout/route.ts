@@ -18,10 +18,44 @@ const PLANS: Record<string, { name: string; value: number; label: string }> = {
 
 const CHECKOUT_RATE_LIMIT = 8;
 const CHECKOUT_WINDOW_MS = 15 * 60 * 1000;
-const WOOVI_TIMEOUT_MS = 12_000;
+const FLOWPAY_TIMEOUT_MS = 12_000;
 
 function isKnownPlan(planId: string): planId is keyof typeof PLANS {
     return Object.prototype.hasOwnProperty.call(PLANS, planId);
+}
+
+function asString(value: unknown): string | undefined {
+    if (typeof value !== "string") return undefined;
+    const trimmed = value.trim();
+    return trimmed.length > 0 ? trimmed : undefined;
+}
+
+function resolveFlowpayCreateChargeUrl(rawValue: string | undefined): string | null {
+    const fallback = "https://api.flowpay.cash";
+
+    try {
+        const url = new URL(rawValue || fallback);
+        if (url.hostname === "flowpay.cash" || url.hostname === "www.flowpay.cash") {
+            url.hostname = "api.flowpay.cash";
+        }
+        const path = url.pathname.replace(/\/+$/, "");
+
+        if (path === "" || path === "/") {
+            url.pathname = "/api/create-charge";
+        } else if (path === "/api") {
+            url.pathname = "/api/create-charge";
+        } else if (path.endsWith("/api/create-charge")) {
+            url.pathname = path;
+        } else {
+            url.pathname = `${path}/api/create-charge`;
+        }
+
+        url.search = "";
+        url.hash = "";
+        return url.toString();
+    } catch {
+        return null;
+    }
 }
 
 async function fetchWithTimeout(input: string, init: RequestInit, timeoutMs: number): Promise<Response> {
@@ -87,20 +121,18 @@ export async function POST(req: NextRequest) {
         }
         const plan = PLANS[planId];
 
-        const wooviAuthToken = process.env.WOOVI_API_KEY || process.env.APP_ID;
-        if (!wooviAuthToken) {
-            console.error("WOOVI_API_KEY/APP_ID não configurado");
+        const flowpayApiKey = process.env.FLOWPAY_INTERNAL_API_KEY || process.env.FLOWPAY_API_KEY;
+        if (!flowpayApiKey) {
+            console.error("FLOWPAY_INTERNAL_API_KEY/FLOWPAY_API_KEY não configurado");
             return NextResponse.json(
                 { error: "Serviço de pagamento indisponível no momento." },
                 { status: 503 }
             );
         }
 
-        let wooviBaseUrl: URL;
-        try {
-            wooviBaseUrl = new URL(process.env.WOOVI_API_URL || "https://api.woovi.com");
-        } catch {
-            console.error("WOOVI_API_URL inválido");
+        const flowpayChargeUrl = resolveFlowpayCreateChargeUrl(process.env.FLOWPAY_API_URL);
+        if (!flowpayChargeUrl) {
+            console.error("FLOWPAY_API_URL inválido");
             return NextResponse.json(
                 { error: "Configuração de pagamento inválida." },
                 { status: 500 }
@@ -108,27 +140,29 @@ export async function POST(req: NextRequest) {
         }
 
         const correlationID = `neoconvert-${randomUUID()}`;
+        const amountBrl = Number((plan.value / 100).toFixed(2));
 
-        let wooviRes: Response;
+        let flowpayRes: Response;
         try {
-            wooviRes = await fetchWithTimeout(
-                new URL("/api/v1/charge", wooviBaseUrl).toString(),
+            flowpayRes = await fetchWithTimeout(
+                flowpayChargeUrl,
                 {
                     method: "POST",
                     headers: {
-                        Authorization: wooviAuthToken,
+                        "x-api-key": flowpayApiKey,
                         "Content-Type": "application/json",
                     },
                     body: JSON.stringify({
-                        correlationID,
-                        value: plan.value,
-                        comment: plan.name,
-                        expiresIn: 3600,
-                        customer: { name, email },
-                        additionalInfo: [{ key: "Plano", value: plan.name }],
+                        wallet: "neo-convert",
+                        valor: amountBrl,
+                        moeda: "BRL",
+                        id_transacao: correlationID,
+                        product_id: planId,
+                        customer_name: name,
+                        customer_email: email,
                     }),
                 },
-                WOOVI_TIMEOUT_MS
+                FLOWPAY_TIMEOUT_MS
             );
         } catch (error) {
             if (error instanceof Error && error.name === "AbortError") {
@@ -137,56 +171,69 @@ export async function POST(req: NextRequest) {
                     { status: 504 }
                 );
             }
-            console.error("Erro de conexão com Woovi:", error);
+            console.error("Erro de conexão com FlowPay API:", error);
             return NextResponse.json(
                 { error: "Falha ao conectar no provedor de pagamento." },
                 { status: 502 }
             );
         }
 
-        if (!wooviRes.ok) {
-            const err = (await wooviRes.text()).slice(0, 500);
-            console.error("Woovi error:", wooviRes.status, err);
+        if (!flowpayRes.ok) {
+            const err = (await flowpayRes.text()).slice(0, 500);
+            console.error("FlowPay API error:", flowpayRes.status, err);
+            if (flowpayRes.status === 401 || flowpayRes.status === 403) {
+                return NextResponse.json(
+                    { error: "Integração de pagamento não autorizada. Verifique a chave interna da FlowPay." },
+                    { status: 503 }
+                );
+            }
             return NextResponse.json(
                 { error: "Erro ao criar cobrança Pix. Tente novamente." },
                 { status: 502 }
             );
         }
 
-        const wooviData = await wooviRes.json() as {
-            charge?: {
-                brCode?: unknown;
-                expiresAt?: unknown;
-                pixQrCode?: {
-                    payload?: unknown;
-                    encodedImage?: unknown;
-                };
+        const flowpayData = await flowpayRes.json() as {
+            pix_data?: {
+                qr_code?: unknown;
+                br_code?: unknown;
+                correlation_id?: unknown;
+                expires_at?: unknown;
             };
+            id_transacao?: unknown;
         };
-        const charge = wooviData.charge;
+        const pix = flowpayData.pix_data;
 
-        if (!charge || typeof charge !== "object") {
-            console.error("Resposta da Woovi sem objeto charge");
+        if (!pix || typeof pix !== "object") {
+            console.error("Resposta da FlowPay API sem objeto pix_data");
             return NextResponse.json(
                 { error: "Resposta inválida do provedor de pagamento." },
                 { status: 502 }
             );
         }
 
-        const brCode = typeof charge.brCode === "string"
-            ? charge.brCode
-            : (typeof charge.pixQrCode?.payload === "string" ? charge.pixQrCode.payload : undefined);
-        const qrCode = typeof charge.pixQrCode?.encodedImage === "string"
-            ? charge.pixQrCode.encodedImage
-            : undefined;
-        const expiresAt = typeof charge.expiresAt === "string" ? charge.expiresAt : undefined;
+        const brCode = asString(pix.br_code);
+        const qrCode = asString(pix.qr_code);
+        const expiresAt = asString(pix.expires_at);
+        const effectiveCorrelationId =
+            asString(pix.correlation_id) ||
+            asString(flowpayData.id_transacao) ||
+            correlationID;
+
+        if (!brCode && !qrCode) {
+            console.error("FlowPay API sem dados Pix utilizáveis");
+            return NextResponse.json(
+                { error: "Cobrança criada sem QR Code. Tente novamente." },
+                { status: 502 }
+            );
+        }
 
         // Enviar email de confirmação via Mailtrap
         if (process.env.MAILTRAP_API_TOKEN) {
             const safeName = escapeHtml(name);
             const safePlanName = escapeHtml(plan.name);
             const safePlanLabel = escapeHtml(plan.label);
-            const safeCorrelationID = escapeHtml(correlationID);
+            const safeCorrelationID = escapeHtml(effectiveCorrelationId);
             const safePixCode = brCode ? escapeHtml(brCode) : "";
             const qrImage = qrCode
                 ? `<img src="data:image/png;base64,${qrCode}" width="200" height="200" alt="QR Code Pix" style="border-radius:12px;" />`
@@ -237,7 +284,7 @@ export async function POST(req: NextRequest) {
 
         const response = NextResponse.json({
             success: true,
-            correlationID,
+            correlationID: effectiveCorrelationId,
             brCode,
             qrCode,
             expiresAt,

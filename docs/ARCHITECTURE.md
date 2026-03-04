@@ -7,8 +7,8 @@
 | Framework | **Next.js 16** (App Router) | SSR, API routes, Turbopack |
 | Styling | **Vanilla CSS** com variáveis CSS | Zero dependências, controle total |
 | Fontes | Space Grotesk + JetBrains Mono | Google Fonts — identidade NEO |
-| Payments | **Woovi/OpenPix API** | Mesmo backend do FlowPay |
-| Email | **Resend** | Auth: já integrado no flowpay-api |
+| Payments | **FlowPay API (`api.flowpay.cash`)** | Gateway único da stack NEO |
+| Email | **Mailtrap** | Notificações transacionais |
 | PDF Engine | **pdf-lib** | Client-side, sem servidor |
 | Deploy | **Vercel** | Free tier, edge functions |
 | Domínio | neo-convert.site | A confirmar |
@@ -80,13 +80,14 @@ Definido em `app/globals.css` via variáveis CSS:
 User → Pricing.tsx
   → CheckoutModal.tsx (form: nome + email)
     → POST /api/checkout
-      → Woovi API → cria charge Pix
-      → Resend → envia email QR Code
+      → FlowPay API → cria charge Pix
+      → Mailtrap → envia email QR Code
     → retorna { qrCodeImage, brCode, correlationId }
   → exibe QR Code + Pix Copia e Cola
 
 [Pix pago]
-  → webhook Woovi → (a implementar) ativa conta do usuário
+  → webhook central na FlowPay API
+  → NeoConvert consulta status via FlowPay quando necessário
 ```
 
 ---
@@ -95,6 +96,6 @@ User → Pricing.tsx
 
 | Método | Rota | Descrição |
 |--------|------|-----------|
-| `POST` | `/api/checkout` | Cria cobrança Pix via Woovi |
-| `POST` | `/api/webhook/pix` | (TODO) Recebe confirmação de pagamento |
+| `POST` | `/api/checkout` | Cria cobrança Pix via FlowPay API |
+| `POST` | `/api/webhook/pix` | Legado (não é o fluxo principal) |
 | `GET` | `/api/subscription/[id]` | (TODO) Status da assinatura |

@@ -22,8 +22,8 @@
 **NeoConvert** é um SaaS de ferramentas PDF com:
 - 12+ ferramentas (comprimir, mesclar, dividir, assinar, converter...)
 - Design NEO (dark mode, glassmorphism, verde neon)
-- Pagamentos via **Pix** usando a infraestrutura FlowPay/Woovi
-- Email transacional via **Resend**
+- Pagamentos via **Pix** usando a infraestrutura **FlowPay API**
+- Email transacional via **Mailtrap**
 - Planos: Starter R$7,50 · Pro R$29 · Business R$79
 
 ---

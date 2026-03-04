@@ -3,18 +3,15 @@
 ## .env.local (desenvolvimento)
 
 ```bash
-# ─── WOOVI / OPENPIX (Pix) ───────────────────────────────
-# App Id do painel Woovi: https://app.woovi.com/home/applications
-WOOVI_API_KEY=SUA_APP_ID_AQUI
-WOOVI_API_URL=https://api.woovi.com
+# ─── FLOWPAY API (Pix centralizado na stack NEO) ─────────
+FLOWPAY_API_URL=https://api.flowpay.cash
+FLOWPAY_INTERNAL_API_KEY=SUA_FLOWPAY_INTERNAL_API_KEY
+# Opcional (alias legado aceito): FLOWPAY_API_KEY=
 
-# Webhook secret para validar callbacks
-WOOVI_WEBHOOK_SECRET=SUA_WEBHOOK_SECRET_AQUI
-
-# ─── RESEND (Email) ──────────────────────────────────────
-# Chave em: https://resend.com/api-keys
-RESEND_API_KEY=re_XXXXXXXX
-RESEND_FROM=NeoConvert <no-reply@neo-convert.site>
+# ─── MAILTRAP (Email transacional) ───────────────────────
+MAILTRAP_API_TOKEN=
+MAILTRAP_FROM_EMAIL=no-reply@neo-convert.com
+MAILTRAP_FROM_NAME=NeoConvert
 
 # ─── APP ─────────────────────────────────────────────────
 NEXT_PUBLIC_APP_URL=http://localhost:3000
@@ -25,11 +22,12 @@ NEXT_PUBLIC_APP_URL=http://localhost:3000
 Configurar em: **Vercel Dashboard → Project → Settings → Environment Variables**
 
 ```bash
-WOOVI_API_KEY=PROD_APP_ID
-WOOVI_API_URL=https://api.woovi.com
-WOOVI_WEBHOOK_SECRET=PROD_WEBHOOK_SECRET
-RESEND_API_KEY=re_PROD_KEY
-RESEND_FROM=NeoConvert <no-reply@neo-convert.site>
+FLOWPAY_API_URL=https://api.flowpay.cash
+FLOWPAY_INTERNAL_API_KEY=PROD_FLOWPAY_INTERNAL_API_KEY
+# Opcional (alias legado): FLOWPAY_API_KEY=PROD_FLOWPAY_INTERNAL_API_KEY
+MAILTRAP_API_TOKEN=PROD_MAILTRAP_TOKEN
+MAILTRAP_FROM_EMAIL=no-reply@neo-convert.com
+MAILTRAP_FROM_NAME=NeoConvert
 NEXT_PUBLIC_APP_URL=https://neo-convert.site
 ```
 
@@ -37,22 +35,21 @@ NEXT_PUBLIC_APP_URL=https://neo-convert.site
 
 ## Como obter cada chave
 
-### Woovi (Pix)
-1. Criar conta em [woovi.com](https://woovi.com)
-2. Ir em **Configurações → Aplicações**
-3. Criar nova aplicação → copiar `App Id`
-4. Para webhook: **Configurações → Webhooks → Criar** com a URL `https://neo-convert.site/api/webhook/pix`
+### FlowPay API (Pix)
+1. Usar endpoint canônico `https://api.flowpay.cash`
+2. Solicitar `FLOWPAY_INTERNAL_API_KEY` no projeto central da FlowPay
+3. Não criar webhook Woovi no `neo-convert` (webhook fica centralizado na FlowPay)
+4. `FLOWPAY_SIGNATURE_SECRET`/`FLOWPAY_WEBHOOK_SECRET` não são usados no checkout (são segredos de webhook)
 
-### Resend (Email)
-1. Criar conta em [resend.com](https://resend.com)
-2. Ir em **API Keys → Create API Key**
-3. Adicionar domínio `neo-convert.site` em **Domains** (para produção)
-4. Para teste local, usar `onboarding@resend.dev` como `from`
+### Mailtrap (Email)
+1. Criar conta em [mailtrap.io](https://mailtrap.io)
+2. Ir em **Email Sending → API Tokens**
+3. Configurar remetente válido para produção
 
 ---
 
-## ⚠️ Segurança
+## Segurança
 
-- **Nunca commitar** `.env.local` no git (já está no `.gitignore`)
+- Nunca commitar `.env.local` no git (já está no `.gitignore`)
 - Rotacionar chaves se comprometidas
-- `WOOVI_WEBHOOK_SECRET` deve ser string longa e aleatória
+- `FLOWPAY_INTERNAL_API_KEY` deve existir apenas em ambiente seguro (Vercel/CI secrets)

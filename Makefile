@@ -112,7 +112,7 @@ release: check build commit push ## Full release: check → build → commit →
 
 ## ── Utilitários ──────────────────────────────────────────────
 
-secret: ## Gera um secret aleatório para WOOVI_WEBHOOK_SECRET
+secret: ## Gera um secret aleatório (uso legado)
 	@openssl rand -hex 32
 
 info: ## Mostra versões das ferramentas

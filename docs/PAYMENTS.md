@@ -1,10 +1,11 @@
-# PAYMENTS.md — Integração FlowPay + Pix + Resend
+# PAYMENTS.md — Integração NeoConvert -> FlowPay API
 
 ## Visão Geral
 
-O NeoConvert usa a mesma infraestrutura de pagamentos do **FlowPay**:
-- **Woovi/OpenPix** → geração de cobranças Pix
-- **Resend** → emails transacionais
+O NeoConvert usa a infraestrutura central de pagamentos da stack NEO:
+- **FlowPay API Edge** (`https://api.flowpay.cash`)
+- O provedor Pix (Woovi/OpenPix) fica encapsulado na FlowPay API
+- O NeoConvert não cria webhook Woovi próprio
 
 ---
 
@@ -20,48 +21,42 @@ O NeoConvert usa a mesma infraestrutura de pagamentos do **FlowPay**:
 
 ---
 
-## Woovi / OpenPix API
+## FlowPay API (contrato canônico)
 
 ### Endpoint usado
 ```
-POST https://api.woovi.com/api/v1/charge
+POST https://api.flowpay.cash/api/create-charge
 ```
 
 ### Payload enviado
 ```json
 {
-  "correlationID": "neoconvert-{timestamp}-{random}",
-  "value": 2900,
-  "comment": "NeoConvert Pro",
-  "expiresIn": 3600,
-  "customer": {
-    "name": "Nome do usuário",
-    "email": "email@exemplo.com"
-  },
-  "additionalInfo": [
-    { "key": "Plano", "value": "NeoConvert Pro" }
-  ]
+  "wallet": "neo-convert",
+  "valor": 29,
+  "moeda": "BRL",
+  "id_transacao": "neoconvert-{uuid}",
+  "product_id": "pro",
+  "customer_name": "Nome do usuário",
+  "customer_email": "email@exemplo.com"
 }
 ```
 
 ### Resposta relevante
 ```json
 {
-  "charge": {
-    "correlationID": "...",
-    "brCode": "00020126...",
-    "pixQrCode": {
-      "encodedImage": "base64...",
-      "payload": "00020126..."
-    },
-    "expiresAt": "2026-03-04T02:00:00Z"
+  "success": true,
+  "pix_data": {
+    "correlation_id": "...",
+    "br_code": "00020126...",
+    "qr_code": "base64...",
+    "expires_at": "2026-03-04T02:00:00Z"
   }
 }
 ```
 
 ---
 
-## Resend Email
+## Email transacional (Mailtrap)
 
 ### Template de confirmação
 Enviado automaticamente após criação da cobrança com:
@@ -70,27 +65,15 @@ Enviado automaticamente após criação da cobrança com:
 - ID da cobrança para referência
 
 ### From address
-```
-NeoConvert <no-reply@neo-convert.site>
-```
-> Configurar domínio no painel Resend: https://resend.com/domains
+`NeoConvert <no-reply@neo-convert.com>`
 
 ---
 
-## TODO — Webhook de confirmação
+## Webhook e confirmação de pagamento
 
-Quando o Pix for pago, Woovi envia webhook. A implementar:
-
-```typescript
-// app/api/webhook/pix/route.ts
-export async function POST(req: NextRequest) {
-  // 1. Validar assinatura HMAC do Woovi
-  // 2. Verificar status: "COMPLETED" | "PAID"
-  // 3. Ativar assinatura do usuário no banco
-  // 4. Enviar email de boas-vindas via Resend
-  // 5. Retornar 200 OK
-}
-```
+- O webhook de pagamento fica centralizado na FlowPay API.
+- Não criar novo webhook Woovi no `neo-convert`.
+- Para UX em tempo real no front, usar polling via `GET /api/charge/:id` da FlowPay API.
 
 ---
 
@@ -102,7 +85,6 @@ Ver [ENV.md](./ENV.md)
 
 ## Como testar localmente
 
-1. Criar conta em [woovi.com](https://woovi.com) (sandbox disponível)
-2. Pegar `App Id` (é a WOOVI_API_KEY)
-3. Configurar `.env.local`
-4. Usar Pix no modo sandbox para simular pagamento
+1. Configurar `FLOWPAY_API_URL` e `FLOWPAY_INTERNAL_API_KEY` no ambiente
+2. Chamar o checkout no front (`/api/checkout`)
+3. Validar resposta com `brCode`, `qrCode` e `correlationID`

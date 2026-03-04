@@ -22,7 +22,7 @@ const nextConfig: NextConfig = {
               "style-src 'self' 'unsafe-inline'",
               "img-src 'self' data: blob: https:",
               "font-src 'self' data:",
-              "connect-src 'self' https://api.woovi.com https://send.api.mailtrap.io https://*.blob.vercel-storage.com",
+              "connect-src 'self' https://api.flowpay.cash https://send.api.mailtrap.io https://*.blob.vercel-storage.com",
               "frame-ancestors 'none'",
               "base-uri 'self'",
               "form-action 'self'",
