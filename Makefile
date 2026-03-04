@@ -44,7 +44,7 @@ dev: ## Inicia servidor de desenvolvimento (localhost:3000)
 
 build: ## Build de produção
 	@echo "$(CYAN)→ Building NeoConvert...$(RESET)"
-	pnpm build
+	NODE_ENV=production pnpm build
 	@echo "$(GREEN)✓ Build concluído.$(RESET)"
 
 start: ## Inicia servidor de produção (após build)
