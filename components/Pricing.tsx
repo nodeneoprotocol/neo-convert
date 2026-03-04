@@ -4,21 +4,22 @@ import CheckoutModal from "./CheckoutModal";
 
 const PLANS = [
   {
-    id: "",
-    name: "Grátis",
-    price: "R$ 0",
+    id: "starter",
+    name: "Starter",
+    price: "R$ 7,50",
     period: "/mês",
-    desc: "Para testar as ferramentas",
+    desc: "Para uso pessoal e casual",
     features: [
-      "5 arquivos por dia",
-      "Até 10 MB por arquivo",
-      "Compressão básica",
-      "Ferramentas essenciais",
+      "20 arquivos por dia",
+      "Até 25 MB por arquivo",
+      "Comprimir, mesclar e dividir PDF",
+      "JPG e imagens para PDF",
+      "Suporte por email",
     ],
-    cta: "Começar grátis",
-    href: "#tools",
+    cta: "Assinar Starter",
+    href: "#",
     featured: false,
-    checkout: false,
+    checkout: true,
   },
   {
     id: "pro",

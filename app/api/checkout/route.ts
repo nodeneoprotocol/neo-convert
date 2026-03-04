@@ -33,7 +33,8 @@ export async function POST(req: NextRequest) {
             {
                 method: "POST",
                 headers: {
-                    Authorization: process.env.WOOVI_API_KEY || "",
+                    // Woovi usa o App ID diretamente como Authorization
+                    Authorization: process.env.APP_ID || process.env.WOOVI_API_KEY || "",
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify({
