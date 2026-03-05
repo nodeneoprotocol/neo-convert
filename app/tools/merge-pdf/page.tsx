@@ -32,7 +32,7 @@ export default function MergePDFPage() {
             description="Una vários arquivos PDF em um único documento. Arraste na ordem desejada e baixe o resultado instantaneamente."
             accept=".pdf"
             acceptLabel="Selecione 2 ou mais arquivos PDF"
-            color="#7b2fff"
+            color="#a87aff"
             onProcess={mergePDFs}
             multi={true}
             tip="Selecione os arquivos na ordem em que quer que apareçam no PDF final."

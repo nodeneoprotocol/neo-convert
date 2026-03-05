@@ -52,10 +52,13 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
         const filename = safeFilename(file.name, 'arquivo');
 
+        const token = process.env.BLOB_READ_WRITE_TOKEN || process.env.neo_READ_WRITE_TOKEN;
+
         const blob = await put(filename, file, {
             access: 'public',
             contentType: file.type,
             addRandomSuffix: true,
+            token: token,
         });
 
         const response = NextResponse.json({

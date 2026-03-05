@@ -53,6 +53,7 @@ vercel env add MAILTRAP_API_TOKEN production
 vercel env add MAILTRAP_FROM_EMAIL production
 vercel env add MAILTRAP_FROM_NAME production
 vercel env add NEXT_PUBLIC_APP_URL production
+vercel env add BLOB_READ_WRITE_TOKEN production
 ```
 
 Ou via dashboard: **vercel.com → neo-convert → Settings → Environment Variables**

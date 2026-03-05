@@ -31,8 +31,8 @@ export default function ComingSoon({ icon, title, description, color, availableI
                 <span style={{
                     display: "inline-block", marginBottom: 20,
                     padding: "4px 14px", borderRadius: 999,
-                    background: "rgba(123, 47, 255, 0.15)", border: "1px solid rgba(123, 47, 255, 0.3)",
-                    color: "#7b2fff", fontSize: 11, fontWeight: 700,
+                    background: "var(--neo-purple-dim)", border: "1px solid rgba(168, 122, 255, 0.3)",
+                    color: "var(--neo-purple)", fontSize: 11, fontWeight: 700,
                     fontFamily: "monospace", letterSpacing: "0.08em", textTransform: "uppercase",
                 }}>Em desenvolvimento · {availableIn}</span>
 

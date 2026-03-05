@@ -15,6 +15,10 @@ MAILTRAP_FROM_NAME=NeoConvert
 
 # ─── APP ─────────────────────────────────────────────────
 NEXT_PUBLIC_APP_URL=http://localhost:3000
+
+# ─── VERCEL BLOB (Uploads de PDF/Imagens) ────────────────
+BLOB_READ_WRITE_TOKEN=vercel_blob_rw_...
+neo_READ_WRITE_TOKEN=vercel_blob_rw_...
 ```
 
 ## .env.production (Vercel)
@@ -29,6 +33,8 @@ MAILTRAP_API_TOKEN=PROD_MAILTRAP_TOKEN
 MAILTRAP_FROM_EMAIL=no-reply@neo-convert.com
 MAILTRAP_FROM_NAME=NeoConvert
 NEXT_PUBLIC_APP_URL=https://neo-convert.site
+BLOB_READ_WRITE_TOKEN=PROD_BLOB_TOKEN
+neo_READ_WRITE_TOKEN=PROD_BLOB_TOKEN
 ```
 
 ---

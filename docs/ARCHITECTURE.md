@@ -12,6 +12,7 @@
 | PDF Engine | **pdf-lib** | Client-side, sem servidor |
 | Deploy | **Vercel** | Free tier, edge functions |
 | Domínio | neo-convert.site | A confirmar |
+| Storage | **Vercel Blob** | Armazenamento seguro de uploads temporários |
 
 ---
 
@@ -52,7 +53,7 @@ Definido em `app/globals.css` via variáveis CSS:
 --bg-base: #0a0a0f;          /* fundo principal */
 --bg-surface: #13131a;       /* cards */
 --neo-green: #00ff9d;        /* accent primário */
---neo-purple: #7b2fff;       /* accent secundário */
+--neo-purple: #a87aff;       /* accent secundário */
 --text-primary: #e8e8f0;     /* texto principal */
 
 /* Efeitos */
@@ -99,3 +100,4 @@ User → Pricing.tsx
 | `POST` | `/api/checkout` | Cria cobrança Pix via FlowPay API |
 | `POST` | `/api/webhook/pix` | Legado (não é o fluxo principal) |
 | `GET` | `/api/subscription/[id]` | (TODO) Status da assinatura |
+| `POST` | `/api/upload-to-cloud` | Upload seguro e temporário para o Vercel Blob |

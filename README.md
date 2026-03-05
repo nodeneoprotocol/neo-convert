@@ -1,36 +1,47 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# NΞØ CONVΞRT
 
-## Getting Started
+Ferramenta serverless de autoria, compressão e edição de PDFs focada em utilidade premium, monetização via Pix (FlowPay) e estética NEO.
 
-First, run the development server:
+## Stack Técnica
+
+- **Framework**: Next.js 16 (App Router)
+- **Engine PDF**: `pdf-lib` (Client-side fast rendering)
+- **Armazenamento**: Vercel Blob (Seguro e temporário)
+- **Notificações**: Mailtrap (Emails transacionais)
+- **Checkout / Pix**: FlowPay API
+- **Estilização**: CSS Modules Vanilla + Globals (Design System NEO)
+
+## Como Iniciar
+
+### 1. Requisitos
+
+- Node.js >= 22.0.0
+- `pnpm` gerenciador de pacotes
+
+### 2. Variáveis de Ambiente
+
+Crie um arquivo `.env.local` na raiz baseado no `.env.example` e na documentação em `docs/ENV.md`:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+cp .env.example .env.local
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 3. Instalação e Execução
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+make install
+make dev
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Abra [http://localhost:3000](http://localhost:3000) no seu navegador.
 
-## Learn More
+## Documentação
 
-To learn more about Next.js, take a look at the following resources:
+Toda documentação está localizada em `/docs`:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- `ARCHITECTURE.md`: Detalhes de serviços externos e roteamento.
+- `DEPLOY.md`: Estratégias e Vercel CI.
+- `ENV.md`: Todas as variáveis e onde conseguir as chaves.
+- `PAYMENTS.md`: Arquitetura do módulo checkout.
+- `ROADMAP.md`: Ferramentas sendo planejadas e futuro do projeto.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
