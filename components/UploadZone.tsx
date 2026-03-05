@@ -107,7 +107,7 @@ export default function UploadZone() {
         <button
           onClick={() => setUploaded(null)}
           style={{
-            background: "none", border: "none", color: "var(--text-muted)",
+            background: "none", border: "none", color: "var(--text-secondary)",
             fontSize: 12, marginTop: 20, cursor: "pointer", textDecoration: "underline"
           }}
         >
@@ -151,9 +151,9 @@ export default function UploadZone() {
             fontSize: 32,
           }}>📄</div>
 
-          <h3 style={{ fontSize: 22, fontWeight: 700, marginBottom: 10, color: "var(--text-primary)" }}>
+          <div style={{ fontSize: 22, fontWeight: 700, marginBottom: 10, color: "var(--text-primary)" }}>
             {drag ? "Solte aqui! 🎯" : "Arraste seu arquivo aqui"}
-          </h3>
+          </div>
           <p style={{ color: "var(--text-secondary)", fontSize: 14, marginBottom: 28 }}>
             PDF, Word, JPG, PNG — até 50 MB
           </p>

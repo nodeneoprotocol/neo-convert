@@ -172,7 +172,7 @@ function ToolPageInner({
     };
 
     return (
-        <div style={{ minHeight: "100vh", paddingTop: 100, paddingBottom: 80 }}>
+        <main id="main-content" style={{ minHeight: "100vh", paddingTop: 100, paddingBottom: 80 }}>
             <div className="container" style={{ maxWidth: 720 }}>
                 {/* Breadcrumb */}
                 <div style={{ marginBottom: 32, display: "flex", alignItems: "center", gap: 8, fontSize: 13, color: "var(--text-muted)" }}>
@@ -182,7 +182,7 @@ function ToolPageInner({
                 </div>
 
                 {/* Header */}
-                <div style={{ marginBottom: 40, textAlign: "center" }}>
+                <header style={{ marginBottom: 40, textAlign: "center" }}>
                     <div style={{
                         width: 72, height: 72, borderRadius: 20,
                         background: `${color}18`, border: `1px solid ${color}30`,
@@ -195,7 +195,7 @@ function ToolPageInner({
                     <p style={{ color: "var(--text-secondary)", fontSize: 16, maxWidth: 480, margin: "0 auto" }}>
                         {description}
                     </p>
-                </div>
+                </header>
 
                 {/* Drop Zone */}
                 {!results.length && (
@@ -236,9 +236,9 @@ function ToolPageInner({
                                     display: "flex", alignItems: "center", justifyContent: "center",
                                     margin: "0 auto 20px", fontSize: 28,
                                 }}>📄</div>
-                                <h3 style={{ fontSize: 18, fontWeight: 700, marginBottom: 8 }}>
+                                <div style={{ fontSize: 18, fontWeight: 700, marginBottom: 8 }}>
                                     {drag ? "Solte aqui" : `Arraste ${multi ? "os arquivos" : "o arquivo"}`}
-                                </h3>
+                                </div>
                                 <p style={{ color: "var(--text-secondary)", fontSize: 14, marginBottom: 20 }}>{acceptLabel}</p>
                                 <div className="btn-primary" style={{ display: "inline-flex" }}>Selecionar</div>
                             </>
@@ -353,7 +353,7 @@ function ToolPageInner({
                     </div>
                 )}
             </div>
-        </div>
+        </main>
     );
 }
 

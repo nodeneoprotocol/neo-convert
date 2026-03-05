@@ -24,7 +24,7 @@ export default function Footer() {
                 Neo<span style={{ color: "var(--neo-green)" }}>Convert</span>
               </span>
             </div>
-            <p style={{ color: "var(--text-muted)", fontSize: 13, lineHeight: 1.7, maxWidth: 260 }}>
+            <p style={{ color: "var(--text-secondary)", fontSize: 13, lineHeight: 1.7, maxWidth: 260 }}>
               Ferramentas PDF premium para profissionais que valorizam velocidade e segurança.
             </p>
           </div>
@@ -41,9 +41,9 @@ export default function Footer() {
               <ul style={{ listStyle: "none", display: "flex", flexDirection: "column", gap: 10 }}>
                 {col.links.map((link) => (
                   <li key={link}>
-                    <a href="#" style={{ color: "var(--text-muted)", fontSize: 13, textDecoration: "none", transition: "color 150ms" }}
-                      onMouseEnter={e => (e.currentTarget.style.color = "var(--text-secondary)")}
-                      onMouseLeave={e => (e.currentTarget.style.color = "var(--text-muted)")}>
+                    <a href="#" style={{ color: "var(--text-secondary)", fontSize: 13, textDecoration: "none", transition: "color 150ms" }}
+                      onMouseEnter={e => (e.currentTarget.style.color = "var(--text-primary)")}
+                      onMouseLeave={e => (e.currentTarget.style.color = "var(--text-secondary)")}>
                       {link}
                     </a>
                   </li>
@@ -58,11 +58,11 @@ export default function Footer() {
           paddingTop: 24,
           display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 12,
         }}>
-          <p style={{ color: "var(--text-muted)", fontSize: 13 }}>
+          <p style={{ color: "var(--text-secondary)", fontSize: 13 }}>
             © 2026 NeoConvert. Todos os direitos reservados.
           </p>
           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-            <span style={{ fontSize: 11, color: "var(--text-muted)", fontFamily: "'JetBrains Mono', monospace" }}>
+            <span style={{ fontSize: 11, color: "var(--text-secondary)", fontFamily: "'JetBrains Mono', monospace" }}>
               built_with 💚
             </span>
           </div>

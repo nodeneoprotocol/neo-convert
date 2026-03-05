@@ -94,7 +94,7 @@ export default function Pricing() {
                 <span style={{ fontSize: 42, fontWeight: 800, color: plan.featured ? "var(--neo-green)" : "var(--text-primary)" }}>
                   {plan.price}
                 </span>
-                <span style={{ color: "var(--text-muted)", fontSize: 14 }}>{plan.period}</span>
+                <span style={{ color: "var(--text-secondary)", fontSize: 14 }}>{plan.period}</span>
               </div>
             </div>
 
