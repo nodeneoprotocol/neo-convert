@@ -55,6 +55,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         const token = process.env.BLOB_READ_WRITE_TOKEN || process.env.neo_READ_WRITE_TOKEN;
 
         const blob = await put(filename, file, {
+            // @ts-expect-error - SDK types miss 'private' access, but Vercel requires it for our store
             access: 'private',
             contentType: file.type,
             addRandomSuffix: true,
