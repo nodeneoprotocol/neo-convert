@@ -58,8 +58,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         const token = process.env.BLOB_READ_WRITE_TOKEN || process.env.neo_READ_WRITE_TOKEN;
 
         const blob = await put(filename, file, {
-            // @ts-expect-error - SDK types miss 'private' access, but Vercel requires it for our store
-            access: 'private',
+            access: 'public',
             contentType: file.type,
             addRandomSuffix: true,
             token: token,
@@ -74,6 +73,12 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         return response;
     } catch (error) {
         console.error('Error uploading to Vercel Blob:', error);
-        return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+        return NextResponse.json(
+            {
+                error: 'Internal Server Error',
+                details: error instanceof Error ? error.message : String(error)
+            },
+            { status: 500 }
+        );
     }
 }
